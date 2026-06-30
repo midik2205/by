@@ -6,10 +6,9 @@
     <title>Квест для любимой ❤️</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
         
         body {
-            font-family: 'Quicksand', 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', 'Quicksand', sans-serif;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -148,10 +147,6 @@
             padding: 10px 5px 20px;
             white-space: pre-line;
             font-weight: 400;
-        }
-        .welcome-text .heart-emoji {
-            display: inline-block;
-            animation: heartBeat 1.5s infinite;
         }
 
         /* ===== ИГРА ===== */
@@ -441,6 +436,24 @@
             transform: scale(1.05);
         }
 
+        .start-btn {
+            background: linear-gradient(135deg, #e91e63, #ad1457);
+            color: white;
+            border: none;
+            padding: 16px 50px;
+            border-radius: 40px;
+            font-size: 1.2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: inherit;
+            margin-top: 10px;
+        }
+        .start-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(233, 30, 99, 0.3);
+        }
+
         /* ===== АДАПТИВ ===== */
         @media (max-width: 500px) {
             .container { padding: 25px 18px; border-radius: 35px; }
@@ -480,9 +493,7 @@
             Надеюсь это заставит тебя улыбнуться. 
             Люблю тебя зайка, удачи 💋
         </div>
-        <button onclick="startGame()" style="background:linear-gradient(135deg,#e91e63,#ad1457);color:white;border:none;padding:16px 50px;border-radius:40px;font-size:1.2em;font-weight:700;cursor:pointer;transition:0.3s;font-family:inherit;margin-top:10px;">
-            Начать квест ➜
-        </button>
+        <button class="start-btn" onclick="startGame()">Начать квест ➜</button>
     </div>
 
     <!-- Игра -->
@@ -526,7 +537,7 @@
 
 <script>
 // ============================================================
-// 1️⃣ ВОПРОСЫ (все 15, с таймерами, фонами, картинками)
+// 1️⃣ ВОПРОСЫ
 // ============================================================
 const levels = [
     {
@@ -572,11 +583,11 @@ const levels = [
             {
                 q: "Моё любимое животное?",
                 options: [
-                    { text: "Лошадь", img: "https://cdn-icons-png.flaticon.com/128/2718/2718765.png" },
-                    { text: "Собака", img: "https://cdn-icons-png.flaticon.com/128/2718/2718766.png" },
-                    { text: "Кошка", img: "https://cdn-icons-png.flaticon.com/128/2718/2718767.png" },
-                    { text: "Корова", img: "https://cdn-icons-png.flaticon.com/128/2718/2718768.png" },
-                    { text: "Свинья", img: "https://cdn-icons-png.flaticon.com/128/2718/2718769.png" }
+                    { text: "Лошадь", img: "https://cdn-icons-png.flaticon.com/128/616/616408.png" },
+                    { text: "Собака", img: "https://cdn-icons-png.flaticon.com/128/616/616430.png" },
+                    { text: "Кошка", img: "https://cdn-icons-png.flaticon.com/128/616/616413.png" },
+                    { text: "Корова", img: "https://cdn-icons-png.flaticon.com/128/616/616432.png" },
+                    { text: "Свинья", img: "https://cdn-icons-png.flaticon.com/128/616/616418.png" }
                 ],
                 correct: 2,
                 bg: "https://images.unsplash.com/photo-1470071459604-7b8ec44ffd7a?w=800"
@@ -776,7 +787,6 @@ const nextBtn = document.getElementById('nextBtn');
 const progressBar = document.getElementById('progressBar');
 const timerDisplay = document.getElementById('timerDisplay');
 
-// Подсчёт общего числа вопросов
 totalQuestions = levels.reduce((acc, lv) => acc + lv.questions.length, 0);
 
 function setBackground(url) {
@@ -796,7 +806,7 @@ function loadQuestion() {
     if (qData.bg) setBackground(qData.bg);
 
     levelTitle.textContent = level.name;
-    levelBadge.textContent = `🌟 Уровень ${currentLevel+1}/${levels.length}`;
+    levelBadge.textContent = '🌟 Уровень ' + (currentLevel+1) + '/' + levels.length;
     questionText.textContent = qData.q;
     feedbackEmoji.textContent = '✨';
     feedbackText.textContent = '';
@@ -807,9 +817,7 @@ function loadQuestion() {
 
     optionsContainer.innerHTML = '';
 
-    // Есть ли варианты?
     if (qData.options && qData.options.length > 0) {
-        // Проверяем, есть ли картинки
         const hasImages = typeof qData.options[0] === 'object';
         qData.options.forEach((opt, index) => {
             const div = document.createElement('div');
@@ -827,11 +835,10 @@ function loadQuestion() {
                 div.textContent = opt;
                 div.dataset.index = index;
             }
-            div.onclick = () => selectAnswer(index);
+            div.onclick = function() { selectAnswer(index); };
             optionsContainer.appendChild(div);
         });
     } else {
-        // Без вариантов — поле ввода
         const input = document.createElement('input');
         input.type = 'text';
         input.className = 'text-input';
@@ -842,7 +849,7 @@ function loadQuestion() {
         btn.className = 'submit-btn';
         btn.textContent = '✅ Отправить';
         btn.id = 'submitTextBtn';
-        btn.onclick = () => {
+        btn.onclick = function() {
             const val = document.getElementById('textAnswer')?.value.trim() || '';
             if (val.length > 0) selectAnswer(-1, val);
             else {
@@ -852,29 +859,27 @@ function loadQuestion() {
         };
         optionsContainer.appendChild(input);
         optionsContainer.appendChild(btn);
-        input.addEventListener('keydown', (e) => {
+        input.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') btn.click();
         });
-        setTimeout(() => input.focus(), 100);
+        setTimeout(function() { input.focus(); }, 100);
     }
 
     nextBtn.style.display = 'none';
 
-    // ТАЙМЕР
     clearInterval(timerInterval);
     const timeLimit = getQuestionTime(currentLevel, currentQuestion);
     timer = timeLimit;
     timerDisplay.textContent = '⏱️ ' + timer;
     timerDisplay.classList.remove('warning');
 
-    timerInterval = setInterval(() => {
+    timerInterval = setInterval(function() {
         timer--;
         timerDisplay.textContent = '⏱️ ' + timer;
         if (timer <= 10) timerDisplay.classList.add('warning');
         if (timer <= 0) {
             clearInterval(timerInterval);
             if (!answered) {
-                // Время вышло → ошибка → перезапуск
                 answered = true;
                 playSound('fail');
                 showFailScreen();
@@ -883,7 +888,7 @@ function loadQuestion() {
     }, 1000);
 }
 
-function selectAnswer(index, textAnswer = '') {
+function selectAnswer(index, textAnswer) {
     if (answered || !isGameActive) return;
     answered = true;
     clearInterval(timerInterval);
@@ -896,43 +901,38 @@ function selectAnswer(index, textAnswer = '') {
     const inputs = document.querySelectorAll('.text-input');
     const submitBtn = document.getElementById('submitTextBtn');
 
-    // Блокируем всё
-    opts.forEach(b => b.classList.add('disabled'));
-    inputs.forEach(inp => inp.disabled = true);
+    opts.forEach(function(b) { b.classList.add('disabled'); });
+    inputs.forEach(function(inp) { inp.disabled = true; });
     if (submitBtn) submitBtn.disabled = true;
 
-    // Проверка
     if (qData.options && qData.options.length > 0) {
-        // Варианты ответов
         const correctIndex = qData.correct;
         isCorrect = (index === correctIndex);
         if (isCorrect) {
             feedbackEmoji.textContent = '❤️ Правильно! Ты умничка!';
             feedbackText.textContent = '✨ Идеально!';
             playSound('correct');
-            opts.forEach((btn, i) => {
+            opts.forEach(function(btn, i) {
                 if (i === correctIndex) btn.classList.add('correct');
             });
         } else {
             feedbackEmoji.textContent = '😢 Неправильно...';
             feedbackText.textContent = 'Но я всё равно тебя люблю! 💕';
             playSound('wrong');
-            opts.forEach((btn, i) => {
+            opts.forEach(function(btn, i) {
                 if (i === index && index !== correctIndex) btn.classList.add('wrong');
                 if (i === correctIndex) btn.classList.add('correct');
             });
-            // Показываем экран провала
-            setTimeout(() => showFailScreen(), 600);
+            setTimeout(function() { showFailScreen(); }, 600);
             return;
         }
     } else {
-        // Без вариантов — проверка текста
         const userAnswer = textAnswer.trim().toLowerCase();
         let correctAnswers = qData.correct;
         if (!Array.isArray(correctAnswers)) correctAnswers = [correctAnswers];
-        correctAnswers = correctAnswers.map(a => a.toString().toLowerCase().trim());
+        correctAnswers = correctAnswers.map(function(a) { return a.toString().toLowerCase().trim(); });
 
-        isCorrect = correctAnswers.some(a => userAnswer === a);
+        isCorrect = correctAnswers.some(function(a) { return userAnswer === a; });
 
         if (isCorrect) {
             feedbackEmoji.textContent = '❤️ Правильно! Ты умничка!';
@@ -942,19 +942,17 @@ function selectAnswer(index, textAnswer = '') {
             feedbackEmoji.textContent = '😢 Неправильно...';
             feedbackText.textContent = 'Правильный ответ: ' + correctAnswers.join(' или ');
             playSound('wrong');
-            setTimeout(() => showFailScreen(), 600);
+            setTimeout(function() { showFailScreen(); }, 600);
             return;
         }
     }
 
-    // Если правильно
     totalAnswered++;
     score++;
     nextBtn.style.display = 'inline-block';
 }
 
-// ===== КНОПКА "ДАЛЬШЕ" =====
-nextBtn.addEventListener('click', () => {
+nextBtn.addEventListener('click', function() {
     if (!isGameActive) return;
     const level = levels[currentLevel];
     if (currentQuestion + 1 < level.questions.length) {
@@ -966,14 +964,12 @@ nextBtn.addEventListener('click', () => {
         playSound('levelup');
         loadQuestion();
     } else {
-        // ВСЁ ПРОЙДЕНО!
         clearInterval(timerInterval);
         playSound('finish');
         showFinalCard();
     }
 });
 
-// ===== ФИНАЛ =====
 function showFinalCard() {
     isGameActive = false;
     gameArea.classList.add('hidden');
@@ -983,7 +979,6 @@ function showFinalCard() {
     document.body.style.backgroundImage = "url('https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800')";
 }
 
-// ===== ЭКРАН ПРОВАЛА =====
 function showFailScreen() {
     isGameActive = false;
     clearInterval(timerInterval);
@@ -1010,17 +1005,14 @@ function fullReset() {
     loadQuestion();
 }
 
-// ===== СТАРТ ИГРЫ (после приветствия) =====
 function startGame() {
     welcomeScreen.classList.add('hidden');
     gameArea.classList.remove('hidden');
     isGameActive = true;
     loadQuestion();
-    // Включаем музыку
     document.body.addEventListener('click', startBackgroundMusic, { once: true });
 }
 
-// ===== ПЕРЕЗАПУСК =====
 function restartGame() {
     fullReset();
 }
@@ -1037,7 +1029,6 @@ function checkPassword() {
         welcomeScreen.classList.remove('hidden');
         gameArea.classList.add('hidden');
         finalCard.style.display = 'none';
-        // Включаем музыку
         document.body.addEventListener('click', startBackgroundMusic, { once: true });
     } else {
         error.textContent = '❌ Неверный пароль, попробуй ещё!';
@@ -1045,7 +1036,7 @@ function checkPassword() {
         input.focus();
     }
 }
-document.getElementById('passwordInput').addEventListener('keydown', (e) => {
+document.getElementById('passwordInput').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') checkPassword();
 });
 
@@ -1056,4 +1047,4 @@ passwordScreen.classList.remove('hidden');
 gameContainer.classList.add('hidden');
 </script>
 </body>
-</html>
+    </html>
