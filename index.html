@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Квест для любимой ❤️</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        
+        body {
+            font-family: 'Quicksand', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: #1a0a0a;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            transition: background-image 0.8s ease;
+        }
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 0;
+        }
+        .container {
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 248, 250, 0.93);
+            backdrop-filter: blur(15px);
+            padding: 35px 28px;
+            border-radius: 50px;
+            max-width: 650px;
+            width: 100%;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+            text-align: center;
+            border: 2px solid rgba(255, 182, 193, 0.3);
+            animation: fadeIn 0.6s ease;
+            max-height: 95vh;
+            overflow-y: auto;
+        }
+        .container::-webkit-scrollbar { width: 4px; }
+        .container::-webkit-scrollbar-thumb { background: #f48fb1; border-radius: 10px; }
+
+        /* ===== ПАРОЛЬ ===== */
+        .password-screen {
+            background: rgba(255, 248, 250, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 45px 30px;
+            border-radius: 50px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+            border: 2px solid #f8bbd0;
+            animation: fadeIn 0.6s ease;
+        }
+        .password-screen h2 {
+            color: #880e4f;
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .password-screen .hint {
+            color: #ad1457;
+            font-size: 1.1em;
+            margin-bottom: 18px;
+        }
+        .password-screen input {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.2em;
+            border: 2px solid #f48fb1;
+            border-radius: 40px;
+            text-align: center;
+            background: #fce4ec;
+            color: #3a001e;
+            outline: none;
+            font-weight: 600;
+            transition: 0.3s;
+            font-family: inherit;
+        }
+        .password-screen input:focus {
+            border-color: #e91e63;
+            box-shadow: 0 0 20px rgba(233, 30, 99, 0.15);
+        }
+        .password-screen .error {
+            color: #c62828;
+            font-size: 0.9em;
+            min-height: 26px;
+            margin: 8px 0;
+        }
+        .password-screen button {
+            background: linear-gradient(135deg, #e91e63, #ad1457);
+            color: white;
+            border: none;
+            padding: 16px 50px;
+            border-radius: 40px;
+            font-size: 1.2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+            font-family: inherit;
+        }
+        .password-screen button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 30px rgba(233, 30, 99, 0.3);
+        }
+
+        /* ===== ОБЩИЕ ===== */
+        .hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.5s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-12px); }
+            75% { transform: translateX(12px); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.15); }
+            75% { transform: scale(0.95); }
+        }
+
+        /* ===== ПРИВЕТСТВИЕ ===== */
+        .welcome-text {
+            font-size: 1.15em;
+            line-height: 1.9;
+            color: #4a0024;
+            padding: 10px 5px 20px;
+            white-space: pre-line;
+            font-weight: 400;
+        }
+        .welcome-text .heart-emoji {
+            display: inline-block;
+            animation: heartBeat 1.5s infinite;
+        }
+
+        /* ===== ИГРА ===== */
+        h1 {
+            color: #880e4f;
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        .subtitle {
+            color: #ad1457;
+            font-size: 1em;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .timer {
+            font-size: 2.4em;
+            font-weight: 700;
+            color: #880e4f;
+            background: #fce4ec;
+            display: inline-block;
+            padding: 4px 30px;
+            border-radius: 50px;
+            margin-bottom: 12px;
+            border: 2px solid #f48fb1;
+            transition: 0.3s;
+            min-width: 110px;
+        }
+        .timer.warning {
+            color: #c62828;
+            animation: pulse 0.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+        .progress {
+            background: #fce4ec;
+            border-radius: 30px;
+            height: 10px;
+            margin-bottom: 18px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #f06292, #e91e63, #ad1457);
+            border-radius: 30px;
+            transition: width 0.6s ease;
+        }
+        .level-badge {
+            background: linear-gradient(135deg, #e91e63, #ad1457);
+            color: white;
+            padding: 6px 24px;
+            border-radius: 40px;
+            font-size: 0.85em;
+            display: inline-block;
+            margin-bottom: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .question {
+            font-size: 1.5em;
+            color: #3a001e;
+            margin: 15px 0 18px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            line-height: 1.4;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 12px 0;
+        }
+        .option {
+            background: white;
+            padding: 14px 18px;
+            border-radius: 20px;
+            border: 2px solid #f8bbd0;
+            cursor: pointer;
+            font-size: 1.05em;
+            color: #3a001e;
+            transition: 0.2s;
+            box-shadow: 0 2px 12px rgba(233, 30, 99, 0.06);
+            font-weight: 600;
+        }
+        .option:hover {
+            transform: scale(1.02);
+            border-color: #e91e63;
+            background: #fce4ec;
+        }
+        .option.correct {
+            background: #a5d6a7;
+            border-color: #2e7d32;
+            animation: pop 0.3s;
+            color: #1b4a1b;
+        }
+        .option.wrong {
+            background: #ef9a9a;
+            border-color: #c62828;
+            animation: shake 0.3s;
+            color: #7a1a1a;
+        }
+        .option.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        .option.with-image {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 18px;
+        }
+        .option.with-image img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #f8bbd0;
+        }
+        .text-input {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.1em;
+            border: 2px solid #f48fb1;
+            border-radius: 20px;
+            text-align: center;
+            background: #fce4ec;
+            color: #3a001e;
+            outline: none;
+            font-weight: 600;
+            font-family: inherit;
+            transition: 0.3s;
+        }
+        .text-input:focus {
+            border-color: #e91e63;
+            box-shadow: 0 0 20px rgba(233, 30, 99, 0.1);
+        }
+        .text-input:disabled {
+            opacity: 0.6;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, #e91e63, #ad1457);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 20px;
+            font-size: 1.05em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: inherit;
+            margin-top: 8px;
+        }
+        .submit-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 25px rgba(233, 30, 99, 0.25);
+        }
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .feedback {
+            font-size: 2.2em;
+            margin: 12px 0 6px;
+            min-height: 50px;
+            font-weight: 700;
+        }
+        .feedback-text {
+            font-size: 1em;
+            color: #4a0024;
+            font-weight: 600;
+            min-height: 30px;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, #e91e63, #ad1457);
+            color: white;
+            border: none;
+            padding: 12px 45px;
+            border-radius: 40px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            display: none;
+            margin-top: 6px;
+            font-family: inherit;
+        }
+        .next-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(233, 30, 99, 0.25);
+        }
+
+        /* ===== ФИНАЛ ===== */
+        .final-card {
+            display: none;
+            animation: fadeIn 1s ease;
+        }
+        .final-card .big-hearts {
+            font-size: 3.5em;
+            animation: float 2.5s infinite;
+        }
+        .final-card h2 {
+            color: #880e4f;
+            font-size: 2em;
+            margin: 12px 0;
+            font-weight: 700;
+        }
+        .final-card .message {
+            background: #fce4ec;
+            padding: 25px 20px;
+            border-radius: 30px;
+            font-size: 1.15em;
+            line-height: 1.9;
+            color: #3a001e;
+            border: 2px dashed #e91e63;
+            white-space: pre-line;
+            font-weight: 400;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, #880e4f, #4a0024);
+            color: white;
+            border: none;
+            padding: 14px 45px;
+            border-radius: 40px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 18px;
+            font-family: inherit;
+        }
+        .restart-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(136, 14, 79, 0.3);
+        }
+
+        /* ===== ОБЛОМ ===== */
+        .fail-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            z-index: 999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        .fail-card {
+            background: rgba(255, 248, 250, 0.95);
+            padding: 45px 35px;
+            border-radius: 50px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            animation: shake 0.5s;
+            border: 3px solid #ef9a9a;
+        }
+        .fail-card h2 {
+            color: #c62828;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        .fail-card p {
+            color: #4a0024;
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .fail-card button {
+            background: linear-gradient(135deg, #e91e63, #ad1457);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 40px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: inherit;
+        }
+        .fail-card button:hover {
+            transform: scale(1.05);
+        }
+
+        /* ===== АДАПТИВ ===== */
+        @media (max-width: 500px) {
+            .container { padding: 25px 18px; border-radius: 35px; }
+            .question { font-size: 1.25em; }
+            .timer { font-size: 1.8em; padding: 3px 20px; }
+            .option { font-size: 0.95em; padding: 12px 14px; }
+            .password-screen { padding: 30px 20px; }
+            .welcome-text { font-size: 1em; }
+            .final-card .message { font-size: 1em; padding: 20px 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ==================== ПАРОЛЬ ==================== -->
+<div class="password-screen" id="passwordScreen">
+    <h2>🔐 Введи пароль</h2>
+    <div class="hint">💭 Подсказка: корова говорит...</div>
+    <input type="text" id="passwordInput" placeholder="Введи пароль" autofocus>
+    <div class="error" id="passwordError"></div>
+    <button onclick="checkPassword()">Войти 💕</button>
+</div>
+
+<!-- ==================== ОСНОВНОЙ КОНТЕЙНЕР ==================== -->
+<div class="container hidden" id="gameContainer">
+    <div class="overlay"></div>
+
+    <!-- Приветствие -->
+    <div id="welcomeScreen" class="fade-in">
+        <h1>💕 Привет, моя любимая!</h1>
+        <div class="welcome-text" id="welcomeText">
+            Приветствую любимая моя девушка 🤍. 
+            Сейчас я хочу тебе устроить игру. 
+            Есть несколько уровней сложности ✨. 
+            В общей сложности 15 вопросиков. 
+            В некоторых вопросах есть варианты ответов, а в некоторых нету. 
+            Надеюсь это заставит тебя улыбнуться. 
+            Люблю тебя зайка, удачи 💋
+        </div>
+        <button onclick="startGame()" style="background:linear-gradient(135deg,#e91e63,#ad1457);color:white;border:none;padding:16px 50px;border-radius:40px;font-size:1.2em;font-weight:700;cursor:pointer;transition:0.3s;font-family:inherit;margin-top:10px;">
+            Начать квест ➜
+        </button>
+    </div>
+
+    <!-- Игра -->
+    <div id="gameArea" class="hidden">
+        <h1>💕 Квест для тебя</h1>
+        <div class="subtitle" id="levelTitle">Уровень 1</div>
+        <div class="timer" id="timerDisplay">⏱️ 60</div>
+        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="level-badge" id="levelBadge">🌟 Уровень 1/3</div>
+        <div class="question" id="questionText">...</div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="feedback" id="feedbackEmoji">✨</div>
+        <div class="feedback-text" id="feedbackText"></div>
+        <button class="next-btn" id="nextBtn">Дальше ➜</button>
+    </div>
+
+    <!-- Финал -->
+    <div class="final-card" id="finalCard">
+        <div class="big-hearts">💖💗💖</div>
+        <h2>🎉 Ты прошла весь квест!</h2>
+        <div class="message" id="finalMessage">
+            Поздравляю тебя любовь моя. 
+            Ты прошла все уровни и ты имеешь полное право на приз. 
+            Напиши мне какой приз ты хочешь. 
+            Ты отлично справилась, умничка 💋. 
+            Люблю тебя безумно сильно солнышко 🤍
+        </div>
+        <div style="font-size:3em; margin:10px 0;">🌹💐🌹</div>
+        <button class="restart-btn" onclick="restartGame()">🔄 Пройти снова</button>
+    </div>
+</div>
+
+<!-- ==================== ЭКРАН ПРОВАЛА ==================== -->
+<div class="fail-overlay" id="failOverlay">
+    <div class="fail-card">
+        <h2>😢 Ой-ой!</h2>
+        <p>Ты ошиблась... Но не переживай!<br>Давай начнём сначала, у тебя всё получится 💕</p>
+        <button onclick="resetFromFail()">🔄 Начать заново</button>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// 1️⃣ ВОПРОСЫ (все 15, с таймерами, фонами, картинками)
+// ============================================================
+const levels = [
+    {
+        name: "💗 Уровень 1 — Лёгкий",
+        time: 60,
+        questions: [
+            {
+                q: "Когда мы начали общаться?",
+                options: [],
+                correct: "17.03.2024",
+                bg: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800"
+            },
+            {
+                q: "Когда ты призналась мне в любви?",
+                options: [],
+                correct: "22.05.2025",
+                bg: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800"
+            },
+            {
+                q: "Когда ты впервые меня поцеловала?",
+                options: [],
+                correct: ["01.06.2025", "1.06.2026"],
+                bg: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800"
+            },
+            {
+                q: "Где мы впервые встретились?",
+                options: ["В школе", "На улице", "В спортзале"],
+                correct: 0,
+                bg: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800"
+            },
+            {
+                q: "Когда моя мама впервые увидела нас вдвоём?",
+                options: [],
+                correct: ["09.05.2025", "9.05.2025"],
+                bg: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=800"
+            }
+        ]
+    },
+    {
+        name: "💘 Уровень 2 — Средний",
+        time: 40,
+        questions: [
+            {
+                q: "Моё любимое животное?",
+                options: [
+                    { text: "Лошадь", img: "https://cdn-icons-png.flaticon.com/128/2718/2718765.png" },
+                    { text: "Собака", img: "https://cdn-icons-png.flaticon.com/128/2718/2718766.png" },
+                    { text: "Кошка", img: "https://cdn-icons-png.flaticon.com/128/2718/2718767.png" },
+                    { text: "Корова", img: "https://cdn-icons-png.flaticon.com/128/2718/2718768.png" },
+                    { text: "Свинья", img: "https://cdn-icons-png.flaticon.com/128/2718/2718769.png" }
+                ],
+                correct: 2,
+                bg: "https://images.unsplash.com/photo-1470071459604-7b8ec44ffd7a?w=800"
+            },
+            {
+                q: "Что мы пили вдвоём в нашу первую прогулку?",
+                options: ["Сок", "Воду", "Ничего", "Вино", "Чай"],
+                correct: 0,
+                bg: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800"
+            },
+            {
+                q: "Когда был наш первый секс?",
+                options: [],
+                correct: "19.08.2025",
+                bg: "https://images.unsplash.com/photo-1517672651691-24622d81c9c4?w=800"
+            },
+            {
+                q: "Кого мы спасли когда гуляли вдвоём?",
+                options: [],
+                correct: "котёнка",
+                bg: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800"
+            },
+            {
+                q: "Мой день рождения? (таймер 10 сек!)",
+                options: [],
+                correct: "10.03.2007",
+                time: 10,
+                bg: "https://images.unsplash.com/photo-1504196606672-aef5c9cefc92?w=800"
+            }
+        ]
+    },
+    {
+        name: "💖 Уровень 3 — Сложный",
+        time: 30,
+        questions: [
+            {
+                q: "Мой любимый десерт?",
+                options: [],
+                correct: ["Я", "Буяна"],
+                bg: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=800"
+            },
+            {
+                q: "Моя любимая игра?",
+                options: [],
+                correct: "шахматы",
+                bg: "https://images.unsplash.com/photo-1507833423370-a126b89d394b?w=800"
+            },
+            {
+                q: "Размер моей обуви?",
+                options: [],
+                correct: "41",
+                bg: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=800"
+            },
+            {
+                q: "Моё первое произведение, после которого я плакал?",
+                options: ["Отверженные", "Овод", "Мастер и Маргарита", "Война и Мир", "Мартин Иден"],
+                correct: 0,
+                bg: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800"
+            },
+            {
+                q: "День рождения моей мамы (месяц и день)?",
+                options: [],
+                correct: ["9 апреля", "09.04", "9.04"],
+                bg: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=800"
+            },
+            {
+                q: "Наша первая прогулка?",
+                options: [],
+                correct: "11.04.2025",
+                bg: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800"
+            },
+            {
+                q: "Когда я впервые признался тебе, что люблю тебя?",
+                options: [],
+                correct: "30.04.2025",
+                bg: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800"
+            }
+        ]
+    }
+];
+
+// ============================================================
+// 2️⃣ ЗВУКИ
+// ============================================================
+function playSound(type) {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        gain.gain.value = 0.12;
+        if (type === 'correct') {
+            osc.frequency.setValueAtTime(523, ctx.currentTime);
+            osc.frequency.setValueAtTime(659, ctx.currentTime + 0.1);
+            osc.frequency.setValueAtTime(784, ctx.currentTime + 0.2);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.45);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.45);
+        } else if (type === 'wrong') {
+            osc.frequency.setValueAtTime(300, ctx.currentTime);
+            osc.frequency.setValueAtTime(200, ctx.currentTime + 0.15);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.4);
+        } else if (type === 'levelup') {
+            [523, 659, 784, 1047].forEach((freq, i) => {
+                const o = ctx.createOscillator();
+                const g = ctx.createGain();
+                o.connect(g);
+                g.connect(ctx.destination);
+                g.gain.value = 0.1;
+                o.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.1);
+                g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.1 + 0.2);
+                o.start(ctx.currentTime + i * 0.1);
+                o.stop(ctx.currentTime + i * 0.1 + 0.2);
+            });
+        } else if (type === 'finish') {
+            [523, 659, 784, 1047, 784, 1047].forEach((freq, i) => {
+                const o = ctx.createOscillator();
+                const g = ctx.createGain();
+                o.connect(g);
+                g.connect(ctx.destination);
+                g.gain.value = 0.1;
+                o.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.12);
+                g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.12 + 0.2);
+                o.start(ctx.currentTime + i * 0.12);
+                o.stop(ctx.currentTime + i * 0.12 + 0.2);
+            });
+        } else if (type === 'fail') {
+            osc.frequency.setValueAtTime(400, ctx.currentTime);
+            osc.frequency.setValueAtTime(300, ctx.currentTime + 0.2);
+            osc.frequency.setValueAtTime(200, ctx.currentTime + 0.4);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.6);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.6);
+        }
+    } catch(e) { /* тихо */ }
+}
+
+// ============================================================
+// 3️⃣ МУЗЫКА
+// ============================================================
+let musicCtx = null;
+let musicInterval = null;
+
+function startBackgroundMusic() {
+    if (musicCtx) return;
+    try {
+        musicCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const gain = musicCtx.createGain();
+        gain.gain.value = 0.03;
+        gain.connect(musicCtx.destination);
+        const notes = [523, 587, 659, 784, 659, 587, 523, 587];
+        let idx = 0;
+        musicInterval = setInterval(() => {
+            if (!musicCtx) return;
+            const osc = musicCtx.createOscillator();
+            const g = musicCtx.createGain();
+            osc.connect(g);
+            g.connect(gain);
+            g.gain.setValueAtTime(0.03, musicCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, musicCtx.currentTime + 0.3);
+            osc.frequency.setValueAtTime(notes[idx % notes.length], musicCtx.currentTime);
+            osc.type = 'sine';
+            osc.start(musicCtx.currentTime);
+            osc.stop(musicCtx.currentTime + 0.3);
+            idx++;
+        }, 380);
+    } catch(e) { /* без музыки */ }
+}
+
+// ============================================================
+// 4️⃣ ЛОГИКА ИГРЫ
+// ============================================================
+let currentLevel = 0, currentQuestion = 0, score = 0, answered = false;
+let timer = 60, timerInterval = null;
+let totalAnswered = 0;
+let totalQuestions = 0;
+let isGameActive = false;
+
+// DOM
+const passwordScreen = document.getElementById('passwordScreen');
+const gameContainer = document.getElementById('gameContainer');
+const welcomeScreen = document.getElementById('welcomeScreen');
+const gameArea = document.getElementById('gameArea');
+const finalCard = document.getElementById('finalCard');
+const failOverlay = document.getElementById('failOverlay');
+
+const levelTitle = document.getElementById('levelTitle');
+const levelBadge = document.getElementById('levelBadge');
+const questionText = document.getElementById('questionText');
+const optionsContainer = document.getElementById('optionsContainer');
+const feedbackEmoji = document.getElementById('feedbackEmoji');
+const feedbackText = document.getElementById('feedbackText');
+const nextBtn = document.getElementById('nextBtn');
+const progressBar = document.getElementById('progressBar');
+const timerDisplay = document.getElementById('timerDisplay');
+
+// Подсчёт общего числа вопросов
+totalQuestions = levels.reduce((acc, lv) => acc + lv.questions.length, 0);
+
+function setBackground(url) {
+    document.body.style.backgroundImage = `url(${url})`;
+}
+
+function getQuestionTime(levelIdx, qIdx) {
+    const q = levels[levelIdx].questions[qIdx];
+    return q.time || levels[levelIdx].time || 60;
+}
+
+function loadQuestion() {
+    if (!isGameActive) return;
+    const level = levels[currentLevel];
+    const qData = level.questions[currentQuestion];
+
+    if (qData.bg) setBackground(qData.bg);
+
+    levelTitle.textContent = level.name;
+    levelBadge.textContent = `🌟 Уровень ${currentLevel+1}/${levels.length}`;
+    questionText.textContent = qData.q;
+    feedbackEmoji.textContent = '✨';
+    feedbackText.textContent = '';
+    answered = false;
+
+    const progress = (totalAnswered / totalQuestions) * 100;
+    progressBar.style.width = Math.min(progress, 100) + '%';
+
+    optionsContainer.innerHTML = '';
+
+    // Есть ли варианты?
+    if (qData.options && qData.options.length > 0) {
+        // Проверяем, есть ли картинки
+        const hasImages = typeof qData.options[0] === 'object';
+        qData.options.forEach((opt, index) => {
+            const div = document.createElement('div');
+            div.className = 'option' + (hasImages ? ' with-image' : '');
+            if (hasImages) {
+                const img = document.createElement('img');
+                img.src = opt.img;
+                img.alt = opt.text;
+                div.appendChild(img);
+                const span = document.createElement('span');
+                span.textContent = opt.text;
+                div.appendChild(span);
+                div.dataset.index = index;
+            } else {
+                div.textContent = opt;
+                div.dataset.index = index;
+            }
+            div.onclick = () => selectAnswer(index);
+            optionsContainer.appendChild(div);
+        });
+    } else {
+        // Без вариантов — поле ввода
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'text-input';
+        input.placeholder = '✍️ Напиши свой ответ...';
+        input.id = 'textAnswer';
+        input.autofocus = true;
+        const btn = document.createElement('button');
+        btn.className = 'submit-btn';
+        btn.textContent = '✅ Отправить';
+        btn.id = 'submitTextBtn';
+        btn.onclick = () => {
+            const val = document.getElementById('textAnswer')?.value.trim() || '';
+            if (val.length > 0) selectAnswer(-1, val);
+            else {
+                feedbackEmoji.textContent = '✍️ Напиши что-нибудь!';
+                feedbackText.textContent = 'Пожалуйста, введи ответ';
+            }
+        };
+        optionsContainer.appendChild(input);
+        optionsContainer.appendChild(btn);
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') btn.click();
+        });
+        setTimeout(() => input.focus(), 100);
+    }
+
+    nextBtn.style.display = 'none';
+
+    // ТАЙМЕР
+    clearInterval(timerInterval);
+    const timeLimit = getQuestionTime(currentLevel, currentQuestion);
+    timer = timeLimit;
+    timerDisplay.textContent = '⏱️ ' + timer;
+    timerDisplay.classList.remove('warning');
+
+    timerInterval = setInterval(() => {
+        timer--;
+        timerDisplay.textContent = '⏱️ ' + timer;
+        if (timer <= 10) timerDisplay.classList.add('warning');
+        if (timer <= 0) {
+            clearInterval(timerInterval);
+            if (!answered) {
+                // Время вышло → ошибка → перезапуск
+                answered = true;
+                playSound('fail');
+                showFailScreen();
+            }
+        }
+    }, 1000);
+}
+
+function selectAnswer(index, textAnswer = '') {
+    if (answered || !isGameActive) return;
+    answered = true;
+    clearInterval(timerInterval);
+
+    const level = levels[currentLevel];
+    const qData = level.questions[currentQuestion];
+
+    let isCorrect = false;
+    const opts = document.querySelectorAll('.option');
+    const inputs = document.querySelectorAll('.text-input');
+    const submitBtn = document.getElementById('submitTextBtn');
+
+    // Блокируем всё
+    opts.forEach(b => b.classList.add('disabled'));
+    inputs.forEach(inp => inp.disabled = true);
+    if (submitBtn) submitBtn.disabled = true;
+
+    // Проверка
+    if (qData.options && qData.options.length > 0) {
+        // Варианты ответов
+        const correctIndex = qData.correct;
+        isCorrect = (index === correctIndex);
+        if (isCorrect) {
+            feedbackEmoji.textContent = '❤️ Правильно! Ты умничка!';
+            feedbackText.textContent = '✨ Идеально!';
+            playSound('correct');
+            opts.forEach((btn, i) => {
+                if (i === correctIndex) btn.classList.add('correct');
+            });
+        } else {
+            feedbackEmoji.textContent = '😢 Неправильно...';
+            feedbackText.textContent = 'Но я всё равно тебя люблю! 💕';
+            playSound('wrong');
+            opts.forEach((btn, i) => {
+                if (i === index && index !== correctIndex) btn.classList.add('wrong');
+                if (i === correctIndex) btn.classList.add('correct');
+            });
+            // Показываем экран провала
+            setTimeout(() => showFailScreen(), 600);
+            return;
+        }
+    } else {
+        // Без вариантов — проверка текста
+        const userAnswer = textAnswer.trim().toLowerCase();
+        let correctAnswers = qData.correct;
+        if (!Array.isArray(correctAnswers)) correctAnswers = [correctAnswers];
+        correctAnswers = correctAnswers.map(a => a.toString().toLowerCase().trim());
+
+        isCorrect = correctAnswers.some(a => userAnswer === a);
+
+        if (isCorrect) {
+            feedbackEmoji.textContent = '❤️ Правильно! Ты умничка!';
+            feedbackText.textContent = '✨ Отлично!';
+            playSound('correct');
+        } else {
+            feedbackEmoji.textContent = '😢 Неправильно...';
+            feedbackText.textContent = 'Правильный ответ: ' + correctAnswers.join(' или ');
+            playSound('wrong');
+            setTimeout(() => showFailScreen(), 600);
+            return;
+        }
+    }
+
+    // Если правильно
+    totalAnswered++;
+    score++;
+    nextBtn.style.display = 'inline-block';
+}
+
+// ===== КНОПКА "ДАЛЬШЕ" =====
+nextBtn.addEventListener('click', () => {
+    if (!isGameActive) return;
+    const level = levels[currentLevel];
+    if (currentQuestion + 1 < level.questions.length) {
+        currentQuestion++;
+        loadQuestion();
+    } else if (currentLevel + 1 < levels.length) {
+        currentLevel++;
+        currentQuestion = 0;
+        playSound('levelup');
+        loadQuestion();
+    } else {
+        // ВСЁ ПРОЙДЕНО!
+        clearInterval(timerInterval);
+        playSound('finish');
+        showFinalCard();
+    }
+});
+
+// ===== ФИНАЛ =====
+function showFinalCard() {
+    isGameActive = false;
+    gameArea.classList.add('hidden');
+    finalCard.style.display = 'block';
+    progressBar.style.width = '100%';
+    levelTitle.textContent = '🎉 Квест пройден!';
+    document.body.style.backgroundImage = "url('https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800')";
+}
+
+// ===== ЭКРАН ПРОВАЛА =====
+function showFailScreen() {
+    isGameActive = false;
+    clearInterval(timerInterval);
+    playSound('fail');
+    failOverlay.style.display = 'flex';
+}
+
+function resetFromFail() {
+    failOverlay.style.display = 'none';
+    fullReset();
+}
+
+function fullReset() {
+    currentLevel = 0;
+    currentQuestion = 0;
+    score = 0;
+    totalAnswered = 0;
+    answered = false;
+    isGameActive = true;
+    clearInterval(timerInterval);
+    gameArea.classList.remove('hidden');
+    finalCard.style.display = 'none';
+    welcomeScreen.classList.add('hidden');
+    loadQuestion();
+}
+
+// ===== СТАРТ ИГРЫ (после приветствия) =====
+function startGame() {
+    welcomeScreen.classList.add('hidden');
+    gameArea.classList.remove('hidden');
+    isGameActive = true;
+    loadQuestion();
+    // Включаем музыку
+    document.body.addEventListener('click', startBackgroundMusic, { once: true });
+}
+
+// ===== ПЕРЕЗАПУСК =====
+function restartGame() {
+    fullReset();
+}
+
+// ============================================================
+// 5️⃣ ПАРОЛЬ
+// ============================================================
+function checkPassword() {
+    const input = document.getElementById('passwordInput');
+    const error = document.getElementById('passwordError');
+    if (input.value.trim().toLowerCase() === 'бу') {
+        passwordScreen.classList.add('hidden');
+        gameContainer.classList.remove('hidden');
+        welcomeScreen.classList.remove('hidden');
+        gameArea.classList.add('hidden');
+        finalCard.style.display = 'none';
+        // Включаем музыку
+        document.body.addEventListener('click', startBackgroundMusic, { once: true });
+    } else {
+        error.textContent = '❌ Неверный пароль, попробуй ещё!';
+        input.value = '';
+        input.focus();
+    }
+}
+document.getElementById('passwordInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') checkPassword();
+});
+
+// ============================================================
+// 6️⃣ СТАРТ
+// ============================================================
+passwordScreen.classList.remove('hidden');
+gameContainer.classList.add('hidden');
+</script>
+</body>
+</html>
